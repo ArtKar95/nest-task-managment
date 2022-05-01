@@ -1,3 +1,4 @@
+import { UserEntity } from './../auth/user.entity';
 import { EntityTask } from './task.entity';
 import { TaskRepository } from './task.repository';
 import { ITaskStatus } from './task-status.enum';
@@ -14,34 +15,43 @@ export class TasksService {
     private taskRepository: TaskRepository,
   ) {}
 
-  async getTaskById(id: string): Promise<EntityTask> {
-    const task = await this.taskRepository.findOne(id);
+  async getTaskById(id: string, user: UserEntity): Promise<EntityTask> {
+    // const task = await this.taskRepository.findOne(id);
+    const task = await this.taskRepository.findOne({ where: { id, user } });
+
     if (!task) {
       throw new NotFoundException(`Task with ID ${id} not found`);
     }
     return task;
   }
 
-  create(createTaskDto: CreateTaskDto): Promise<EntityTask> {
-    return this.taskRepository.createTask(createTaskDto);
+  create(createTaskDto: CreateTaskDto, user: UserEntity): Promise<EntityTask> {
+    return this.taskRepository.createTask(createTaskDto, user);
   }
 
-  async deleteTaskById(id: string): Promise<void> {
-    const result = await this.taskRepository.delete(id);
+  async deleteTaskById(id: string, user: UserEntity): Promise<void> {
+    const result = await this.taskRepository.delete({ id, user });
     if (result.affected === 0) {
       throw new NotFoundException(`Task with ID ${id} not found`);
     }
   }
 
-  async updateTaskStatus(id: string, status: ITaskStatus): Promise<EntityTask> {
-    const task = await this.getTaskById(id);
+  async updateTaskStatus(
+    id: string,
+    status: ITaskStatus,
+    user: UserEntity,
+  ): Promise<EntityTask> {
+    const task = await this.getTaskById(id, user);
     task.status = status;
     await this.taskRepository.save(task);
     return task;
   }
 
-  getTasks(filterDto: GetTasksFilterDto): Promise<EntityTask[]> {
-    return this.taskRepository.getTasks(filterDto);
+  getTasks(
+    filterDto: GetTasksFilterDto,
+    user: UserEntity,
+  ): Promise<EntityTask[]> {
+    return this.taskRepository.getTasks(filterDto, user);
   }
 
   /////////////////////////////////////////////////////

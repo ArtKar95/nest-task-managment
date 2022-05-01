@@ -1,3 +1,5 @@
+import { GetUserDecorator } from './../auth/get-user.decorator';
+import { UserEntity } from './../auth/user.entity';
 import { EntityTask } from './task.entity';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import {
@@ -22,32 +24,45 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get('/:id')
-  getTaskById(@Param('id') id: string): Promise<EntityTask> {
-    return this.tasksService.getTaskById(id);
+  getTaskById(
+    @Param('id') id: string,
+    @GetUserDecorator() user: UserEntity,
+  ): Promise<EntityTask> {
+    return this.tasksService.getTaskById(id, user);
   }
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto): Promise<EntityTask> {
-    return this.tasksService.create(createTaskDto);
+  create(
+    @Body() createTaskDto: CreateTaskDto,
+    @GetUserDecorator() user: UserEntity,
+  ): Promise<EntityTask> {
+    return this.tasksService.create(createTaskDto, user);
   }
 
   @Delete('/:id')
-  deleteTaskById(@Param('id') id: string): Promise<void> {
-    return this.tasksService.deleteTaskById(id);
+  deleteTaskById(
+    @Param('id') id: string,
+    @GetUserDecorator() user: UserEntity,
+  ): Promise<void> {
+    return this.tasksService.deleteTaskById(id, user);
   }
 
   @Patch('/:id')
   updateTaskStatus(
     @Param('id') id: string,
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
+    @GetUserDecorator() user: UserEntity,
   ): Promise<EntityTask> {
     const { status } = updateTaskStatusDto;
-    return this.tasksService.updateTaskStatus(id, status);
+    return this.tasksService.updateTaskStatus(id, status, user);
   }
 
   @Get()
-  getTasks(@Query() filterDto: GetTasksFilterDto): Promise<EntityTask[]> {
-    return this.tasksService.getTasks(filterDto);
+  getTasks(
+    @Query() filterDto: GetTasksFilterDto,
+    @GetUserDecorator() user: UserEntity,
+  ): Promise<EntityTask[]> {
+    return this.tasksService.getTasks(filterDto, user);
   }
 
   //////////////////////////////////////////////////////////////
