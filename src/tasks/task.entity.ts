@@ -24,6 +24,7 @@ export class EntityTask {
   @Column()
   status: ITaskStatus;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @ManyToOne((type) => UserEntity, (user) => user.tasks, { eager: false })
   @Exclude({ toPlainOnly: true })
   user: UserEntity;

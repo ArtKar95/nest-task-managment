@@ -7,6 +7,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -21,6 +22,8 @@ import { AuthGuard } from '@nestjs/passport';
 @Controller('tasks')
 @UseGuards(AuthGuard())
 export class TasksController {
+  private logger = new Logger(TasksController.name);
+
   constructor(private tasksService: TasksService) {}
 
   @Get('/:id')
@@ -28,6 +31,8 @@ export class TasksController {
     @Param('id') id: string,
     @GetUserDecorator() user: UserEntity,
   ): Promise<EntityTask> {
+    this.logger.verbose(`User ${user.userName} trying to get own task`);
+
     return this.tasksService.getTaskById(id, user);
   }
 
@@ -36,6 +41,8 @@ export class TasksController {
     @Body() createTaskDto: CreateTaskDto,
     @GetUserDecorator() user: UserEntity,
   ): Promise<EntityTask> {
+    this.logger.verbose(`User ${user.userName} trying to create task`);
+
     return this.tasksService.create(createTaskDto, user);
   }
 
@@ -44,6 +51,8 @@ export class TasksController {
     @Param('id') id: string,
     @GetUserDecorator() user: UserEntity,
   ): Promise<void> {
+    this.logger.verbose(`User ${user.userName} trying to delete own task`);
+
     return this.tasksService.deleteTaskById(id, user);
   }
 
@@ -62,6 +71,8 @@ export class TasksController {
     @Query() filterDto: GetTasksFilterDto,
     @GetUserDecorator() user: UserEntity,
   ): Promise<EntityTask[]> {
+    this.logger.verbose(`User ${user.userName} trying to get own tasks`);
+
     return this.tasksService.getTasks(filterDto, user);
   }
 

@@ -12,6 +12,7 @@ export class UserEntity {
   @Column()
   password: string;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @OneToMany((type) => EntityTask, (task) => task.user, { eager: true })
   tasks: EntityTask[];
 }
